@@ -4,6 +4,7 @@
   const[weather,setWeather] = useState(null);
   const[error,setError] = useState("");
   const[loading,setLoading]=useState(false);
+  const[unit,setUnit] = useState("C");
   const fetchWeather = async(city)=>{
     setError("");
     setWeather(null);
@@ -23,7 +24,14 @@
     }finally{
       setLoading(false);
     }
-  };
+    };
+    const getTemperature = () => {
+      if(!weather ||!weather.main)
+        return null;
+      return unit === "C"
+      ? weather.main.temp
+      : (weather.main.temp * 9) / 5 + 32;
+    };
   return(
     <div style={{padding:"40px",fontFamily:"Arial"}}>
       <h1>🌦️Weather Dashboard</h1>
@@ -40,22 +48,37 @@
       >
 
       <SearchBar onSearch={fetchWeather}/>
+      <button
+      onClick = {()=>setUnit(unit === "C"?"F":"C")}
+      style={{
+        marginTop:"10px",
+        padding: "8px 12px",
+        borderRadius:"6px",
+        border:"none",
+        cursor:"pointer",
+      }}>
+      switch to °{unit ==="C"?"F" : "C"}
+      </button>
       {error &&<p style={{color:"red"}}>{error}</p>}
       {loading && <p>loading...</p>}
       {weather &&(
-        <div style={{marignTop:"20px",
+        <div style={{marginTop:"20px",
           padding:"20px",
           borderRadius:"10px",
           background:"linear-gradient(to right,#4facfe,#00f2fe)",
           color:"#fff",
           width:"300px",
           textAlign:"center",
-          boxShadow:"0 4px 8px rgba(0,0,0.2)",
+          boxShadow:"0 4px 8px rgba(0,0,0,0.2)",
         }}>
           <h2 style={{margin: "0 0 10px 0"}}>{weather.name}</h2>
-          <p style={{fontSize:"24px",margin: "5px 0"}}>
-          🌡️ Temperature:{weather.main.temp}°C</p>
-          <p>☁️ Condition:{weather.weather[0].description}</p>
+          <p style={{fontSize:"24px",margin: "5px 0"}}></p>
+           {getTemperature() !==null && (
+            <p style={{fontSize:"24px",margin:"5px 0"}}>
+              🌡️Temperature :
+              {getTemperature().toFixed(1)}°{unit}
+            </p>
+           )}
           </div>
 
   )}
