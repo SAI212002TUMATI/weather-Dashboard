@@ -1,0 +1,17 @@
+.clouds{
+    position:fixed;
+    inset:0;
+    background:repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.15),
+        rgba(255,255,255,0.25),
+        transparent 40%
+    );
+    animation:cloudsMove 30s linear infinite;
+    pointer-events:none;
+    z-index:1;
+}
+@keyframes cloudsMove{
+    from {background-position:0 0;}
+    to{background-position:1000px 0 ;}
+}

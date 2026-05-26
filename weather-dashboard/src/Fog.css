@@ -1,0 +1,13 @@
+.fog{
+    position:fixed;
+    inset:0;
+    background:rgba(255,255,255,0.2);
+    animation:fogMove 8s ease-in-out infinite;
+    pointer-events:none;
+    z-index:0;
+}
+@keyframes fogMove{
+0% {opacity: 0.4;}
+50% {opacity:0.6 ;}
+100% {opacity: 0.4;}
+}
