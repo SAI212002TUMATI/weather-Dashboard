@@ -13,7 +13,7 @@ function App() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [unit, setUnit] = useState("C");
-  const [darkMode, setDarkMode] = useState(false);                                    
+  const [darkMode, setDarkMode] = useState(false);
 
   // FETCH WEATHER BY CITY
   const fetchWeather = async (city) => {
@@ -217,6 +217,72 @@ function App() {
       weather.weather[0].main
     );
 
+  // PRECAUTION MESSAGE
+  const getPrecaution = () => {
+
+    if (!weather || !weather.weather)
+      return null;
+
+    const condition =
+      weather.weather[0].main;
+
+    switch (condition) {
+
+      case "Clear":
+        return {
+          message:
+            "☀️ Weather is clear. Stay hydrated outdoors.",
+          severity: "safe",
+        };
+
+      case "Clouds":
+        return {
+          message:
+            "☁️ Cloudy weather. Keep an eye on possible rain.",
+          severity: "moderate",
+        };
+
+      case "Rain":
+        return {
+          message:
+            "🌧️ Carry an umbrella and avoid slippery roads.",
+          severity: "warning",
+        };
+
+      case "Thunderstorm":
+        return {
+          message:
+            "⛈️ Stay indoors and avoid electrical appliances.",
+          severity: "danger",
+        };
+
+      case "Snow":
+        return {
+          message:
+            "❄️ Wear warm clothes and travel carefully.",
+          severity: "warning",
+        };
+
+      case "Mist":
+      case "Fog":
+      case "Haze":
+        return {
+          message:
+            "🌫️ Drive carefully due to low visibility.",
+          severity: "moderate",
+        };
+
+      default:
+        return {
+          message:
+            "🌍 Stay prepared for weather changes.",
+          severity: "safe",
+        };
+    }
+  };
+
+  const precaution = getPrecaution();
+
   return (
     <div
       style={{
@@ -227,8 +293,8 @@ function App() {
         alignItems: "center",
         justifyContent: "center",
         background: darkMode
-        ?"linear-gradient(to right,#141e30,#243b55)"
-        : getBackground(),
+          ? "linear-gradient(to right,#141e30,#243b55)"
+          : getBackground(),
         fontFamily: "Arial",
         padding: "40px",
         overflow: "hidden",
@@ -307,27 +373,30 @@ function App() {
         Switch to °
         {unit === "C" ? "F" : "C"}
       </button>
+
+      {/* DARK MODE BUTTON */}
       <button
-  onClick={() =>
-    setDarkMode(!darkMode)
-  }
-  style={{
-    marginTop: "10px",
-    padding: "10px 15px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
-    background: "rgba(255,255,255,0.2)",
-    color: "white",
-    fontWeight: "bold",
-    backdropFilter: "blur(10px)",
-    zIndex: 1,
-  }}
->
-  {darkMode
-    ? "☀️ Light Mode"
-    : "🌙 Dark Mode"}
-</button>
+        onClick={() =>
+          setDarkMode(!darkMode)
+        }
+        style={{
+          marginTop: "10px",
+          padding: "10px 15px",
+          borderRadius: "10px",
+          border: "none",
+          cursor: "pointer",
+          background:
+            "rgba(255,255,255,0.2)",
+          color: "white",
+          fontWeight: "bold",
+          backdropFilter: "blur(10px)",
+          zIndex: 1,
+        }}
+      >
+        {darkMode
+          ? "☀️ Light Mode"
+          : "🌙 Dark Mode"}
+      </button>
 
       {/* ERROR */}
       {error && (
@@ -445,6 +514,62 @@ function App() {
               ).toLocaleTimeString()}
             </p>
           </div>
+
+          {/* PRECAUTION CARD */}
+          <div
+            style={{
+              marginTop: "20px",
+              padding: "15px",
+              borderRadius: "15px",
+
+              background:
+                precaution.severity ===
+                "danger"
+                  ? "rgba(255,0,0,0.25)"
+                  : precaution.severity ===
+                    "warning"
+                  ? "rgba(255,165,0,0.25)"
+                  : precaution.severity ===
+                    "moderate"
+                  ? "rgba(255,255,0,0.2)"
+                  : "rgba(0,255,100,0.2)",
+
+              border:
+                precaution.severity ===
+                "danger"
+                  ? "2px solid red"
+                  : precaution.severity ===
+                    "warning"
+                  ? "2px solid orange"
+                  : precaution.severity ===
+                    "moderate"
+                  ? "2px solid yellow"
+                  : "2px solid lightgreen",
+
+              animation:
+                precaution.severity ===
+                "danger"
+                  ? "pulse 1s infinite"
+                  : "none",
+            }}
+          >
+            <h3>
+              {precaution.severity ===
+              "danger"
+                ? "🚨 Dangerous"
+                : precaution.severity ===
+                  "warning"
+                ? "⚠️ Warning"
+                : precaution.severity ===
+                  "moderate"
+                ? "🟡 Moderate"
+                : "✅ Safe"}
+            </h3>
+
+            <p>
+              {precaution.message}
+            </p>
+          </div>
         </div>
       )}
 
@@ -518,6 +643,26 @@ function App() {
           )}
         </div>
       )}
+
+      {/* PULSE ANIMATION */}
+      <style>
+        {`
+          @keyframes pulse {
+
+            0% {
+              transform: scale(1);
+            }
+
+            50% {
+              transform: scale(1.03);
+            }
+
+            100% {
+              transform: scale(1);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 }
